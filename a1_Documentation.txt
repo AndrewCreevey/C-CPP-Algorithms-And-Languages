@@ -1,0 +1,143 @@
+======================================================================
+							Data structures
+======================================================================
+
+I am using data structures to store my input strings.
+
+They follow this format:
+
+struct Content {
+	int len;
+	char *input;
+};
+struct Lines {
+	Content name;
+	Content text;
+};
+
+set[num_of_lines][2][len_input & input]
+
+For each line, there is 2 Content structures:
+	One for the Identifier containing name/len
+	One for the Expression containing name/len
+	
+Structures seemed to be a logical way to store my information 
+because I am able to dynamically allocate new memory as needed.
+
+----------------------------------------------------------------------
+
+I also use a third structure ExpStruct when concatenating expressions.
+It is used to seperate the input, and then deal with them according to
+what is in the strings.
+
+
+======================================================================
+							  Algorithm 
+======================================================================
+(Starting from the top of main) - Line number is in the square []'s
+-- Main --
+[35] Starts off by printing my details
+[41] Initialise the structures
+
+-- Program loop ------------------------------------------------------------
+[47] Start with the main program loop, this will run until you type "exit;"
+	 (Or it crashes :P)
+[50] Ensures all the NumLine variables are empty, I was having trouble 
+	 with memory allocation and put this in when I was trying to fix it.
+	 Although, not neccessarily needed, I have decided to keep them in 
+	 as a failsafe and so they aren't allocated to random memory. 
+[59] Check that the number of lines does not exceed the size of set.
+[65] Allocate size of 80 to the inputBuffer
+
+-- Get input ---------------------------------------------------------------
+[68] Start the loop for reading in the input. I am reading in all input
+	 until I get an ending semicolon.
+[72] If there is not enough space in the buffer (after first 80 loops),
+	 resize the buffer to allow another 80 characters.
+[76] Get the character.
+[80] Check that the input is valid, if not, give an error and exit
+[85] If character is a " mark, then increase the quotes counter.
+	 The quotes counter is used to track if input is a literal or not.
+	 e.g. set one "the;cat sat on the mat"; 
+	 The first " mark would be quotes++ (quotes = odd num) so when I read
+	 in the semicolon after 'the', I know from quotes%2=1 if it is a 
+	 literal or the end of the string.
+[89] If a semicolon, check that quotes is equal to one, if not then close
+	 the string and break.
+[98] If \n; check if a literal or not (quotes%2=1), if not, close string
+	 and break.
+[107] If we get through all that, then add to string.
+[112] Removes the \n from the buffer
+[114] Seperate the strings: Basically, only use the inputBuffer for input.
+[122] Create temp and then assign it input
+	
+-- Deal with input loop -----------------------------------------------------
+[126] Start of the loop that deals with input
+[132] Read the statement into another string, limit of 16 as that is the len
+	  of the longest statement (If longer its an error).
+.
+
+-- Start the switch loop ----------------------------------------------------
+[142] Check the statement which returns the case #
+
+	-- Set --
+[147] Strip the statement and space from the temp. "set x" becomes "x"
+[149] Acceptable variable name check
+[152] Error message gives the line number in [], useful to work out where
+	  the program is crashing/exiting and how so.
+[157] Create new identifier and expression variables, allocate them memory
+[162] Perform the Idendity() function on identifier, pretty much seperates
+	  the identifier from all else
+[168] Same as above for Expression()
+[175] Counts the number of spaces, if not in quotes,replaces them with 
+	  semicolons.
+[185] Check that the memory allocation is good
+[199] Work out what the max length of all variables is. This is used to make
+	  the string the size of the absolute max possible (for concatenating).
+	  e.g. string = a1 + reallylongvariablename works fine as string is
+		   the combined size of both variables expressions.
+[210] If there are multiple variables being used it will input them into
+	  the NumLines string. //Comments clearly explain each step.
+[244] If >2 variables, this is where I concatenate them all 
+	  //Comments clearly explain each step.
+[290] If I have done the above ^, then realloc memory and copy into expression
+
+	-- Write into Set structure --
+[296] If checked = 1 or 2 this means that we are writing one expression into
+	  a file and the expression is NOT a different identifier name.
+	  e.g. set one "the cat" 	NOT 	set one two;
+[299] If linecount >0 we must check that the identifier does not already exist
+[309] Overwrite previous variables with new ones. Realloced mem if needed.
+[318] If we have no match on identifier, it is a new name so allocate it
+	  memory and store.
+[329] Check that you havent tried to enter "set one two;" as first input	
+	  (two does not exist yet so will always be error)
+[333] If you do type "set one two" and it is allowed, come in here:
+	  This has the same process as [299,209,318]. See above.
+[376] If still no matches, then it doesnt exist so exit.
+[382] Increase linecount, free variables and exit.
+
+-- Append -> Exit --
+You know what the cases do, and each step is explained with commenting
+
+-- Reverse
+[642] Reverses words in string. Explained in comments. 
+
+-- Identify
+[681] Leaves only the name of the identifier. Explained in comments. 
+
+-- Expression
+[701] Leaves only the name of the expression. Explained in comments. 
+
+-- Strip
+[723] Removes the statement name from string. Explained in comments. 
+
+--StripQuotes
+[737] Removes quote marks from string. Explained in comments. 
+
+-- [752] Punctuation / [768] Letter / [779] Number
+Check if input is valid. Contains all valid inputs.
+
+-- Check statement
+[789] Returns switch case if statement matches, else error
+

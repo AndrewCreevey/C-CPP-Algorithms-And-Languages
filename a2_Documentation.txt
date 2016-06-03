@@ -1,0 +1,88 @@
+Andrew Creevey - 12236284
+
+Languages that I could use include C, C++, Java, Haskell, Python. I chose to use C++.
+
+Reasons for using C++:
+	1. 	Data structures that are already implemented into C++ will be very useful (struct/vector/string)
+	2. 	Daniel suggested that I use sets to store my states/alphabet. Sets are a predefined structure in C++.
+		When using sets I can call .find(X) to determine whether X is contained within the set. This will
+		be useful to efficiently check if X is valid or invalid.
+	3.  The memory allocation is automatic (e.g. when using strings/vectors/sets) so I do not have to
+	    allocate memory myself, this was annoying in the first assignment when using C.
+	4. 	It is easy to read in input from the files, I can write a function that grabs and seperates the 
+		input using stringstream.
+	5. 	I am more comfortable using C++ compared to the other languages mentioned above.
+
+I used struct's to store my variables.
+	- 	Struct's are able to store all my information in one container. This is useful as I am able to
+		access everything from the one data structure.
+	- 	Struct's can also hold different data types inside them such as strings, sets, vectors or even vectors 
+		of type [other structure]
+	- 	I used a vector of Table structures to store the instruction table. This seemed like suitable decision
+		because I can store all 5 variables (per line) in one area, and access them easily.
+	-
+
+Errors I have accounted for:
+	1. 	[81]  Ensure that the input has at least one input
+	2.	[96]  If the position moves left past the first input, then halt
+	3. 	[123] If there is no Instruction for the current state/symbol, exit
+	4.	[179]-[206] Check that the Instruction Table state/symbols are in the states/alphabet
+	5.	[216] Movement must only be +1 or -1
+	6. 	[254] Ensure that the file opened correctly
+	7.	[294] Check that the input words are contained in the alphabet
+	8.	[313]-[331] Check that the Initial/Final states are contained in the states
+	9.	[364] Make sure there is no double ups in the instruction table
+	10. [384] The instruction table must not be more than ((numStates - numFinalStates) * numSymbols) e.g. 4-1*3 = 9
+	
+Program walkthrough:
+	[12]	Table struct definition
+	[21] 	Data struct definition
+	[31]	Function declarations
+	[44] 	Main
+	[47] 	Get input from the input file
+		*[244] GetInput() function:
+		[250] Open the file
+		[258] Read in states
+			*[266] Make_Set function(): Returns a set that is then used to fill the states, this function is used for others too
+		[268] Read in alphabet
+		[278] Read in input words
+		[293] Check that each input is defined in the alphabet
+		[301] Read in initial states
+		[313] Check initial state(s) are defined in states
+		[320] Read in final states
+		[331] Check final state(s) are defined in states
+		[338] Read in the instruction table
+		[349] On the first loop we already have the next line (from 338), so dont want to get the next line yet
+		[357] Make a table, pass the buffer and the temp Data object
+			*[168] Make_Table() function:
+			[176]-[210] Use stringstream to read in the variables. Note that buf is a string so input can be any type
+			[212] Use stringstream to read in an integer into movement (must be +1 or -1)
+			[220] Return the table
+		[360] Check that the new table is not already contained in the instruction table
+		[371] If it's valid, add it to the table
+		[383] Check instruction table must not be more than ((numStates - numFinalStates) * numSymbols) e.g. 4-1*3 = 9
+		[389] Return the input
+	[49] Print out the input, has been aligned nicely (at least on windows 10 cmd)
+		*[159] Print_Set() function: prints out the sets and returns
+	[61] Print each table by cycling through the loop
+		*[224] Print_Table() function: Literally just prints out all the different variables of the table.
+	[66] Start simulating the Turing Machine
+		*[71] Simulation() Function:
+		[82] Ensures that there is at least one input in the input word (defaults to a ^)
+			[86] While != to halt
+			[89] Print out the current state of the machine
+			[96] If the current position is <0 this means we have gone too far, so halt
+			[104] Cycle through all the tables
+			[106] Try to find a table that has the same state/symbol as the current one
+			[107] If we find one, found = true
+			[109] If we find one, then change current state/symbol to new state/symbol
+			[111] Update the position
+			[114] If we are at the end of the tape (last position) and we move right, add a '^' onto the end
+			[122] If we didnt find a table, display no matching tables were found and exit
+			[128] Check if we are at our final state or not, if true the loop stops
+		[132] If halt is true we will go in here
+		[136] Print out the final line
+		[142] Halt is a success!
+		[144] Return to main
+	[67] Thats all folks!
+	
